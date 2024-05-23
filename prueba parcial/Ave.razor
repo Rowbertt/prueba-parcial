@@ -1,0 +1,63 @@
+﻿@page "/ingresar-ave"
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@using prueba_parcial
+
+<h3>Ingrese un Ave</h3>
+
+<EditForm Model="@ave" OnValidSubmit="@Guardar">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="Nombre">Nombre del ave</label>
+        <InputText id="Nombre" @bind-Value="ave.Nombre" class="form-control" />
+        <ValidationMessage For="() => ave.Nombre" />
+    </div>
+    <div class="form-group">
+        <label for="Especie">Especie del ave</label>
+        <InputText id="Especie" @bind-Value="ave.Especie" class="form-control" />
+        <ValidationMessage For="() => ave.Especie" />
+    </div>
+    <div class="form-group">
+        <label for="Alimentacion">Alimentación del ave</label>
+        <InputText id="Alimentacion" @bind-Value="ave.Alimentacion" class="form-control" />
+        <ValidationMessage For="() => ave.Alimentacion" />
+    </div>
+    <div class="form-group">
+        <label for="Vida">Tiempo máximo de vida</label>
+        <InputNumber id="Vida" @bind-Value="ave.Vida" class="form-control" />
+        <ValidationMessage For="() => ave.Vida" />
+    </div>
+    <div class="form-group">
+        <label for="Vuela">¿Vuela?</label>
+        <InputCheckbox id="Vuela" @bind-Value="ave.Vuela" class="form-control" />
+        <ValidationMessage For="() => ave.Vuela" />
+    </div>
+    <div class="form-group">
+        <label for="Incubacion">Período de incubación (meses)</label>
+        <InputNumber id="Incubacion" @bind-Value="ave.Incubacion" class="form-control" />
+        <ValidationMessage For="() => ave.Incubacion" />
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
+</EditForm>
+
+@code {
+    private Ave ave = new Ave();
+    private List<Ave> aves = new List<Ave>();
+
+    protected async Task Guardar()
+    {
+        aves.Add(ave);
+        ave = new Ave();
+        await localStorage.SetItemAsync("aves", aves);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        aves = await localStorage.GetItemAsync<List<Ave>>("aves") ?? new List<Ave>();
+    }
+}

@@ -1,0 +1,55 @@
+﻿@page "/ingresar-animal"
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@using prueba_parcial
+
+<h3>Ingrese un Animal</h3>
+
+<EditForm Model="@animal" OnValidSubmit="@Guardar">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="Nombre">Nombre del animal</label>
+        <InputText id="Nombre" @bind-Value="animal.Nombre" class="form-control" />
+        <ValidationMessage For="() => animal.Nombre" />
+    </div>
+    <div class="form-group">
+        <label for="Especie">Especie del animal</label>
+        <InputText id="Especie" @bind-Value="animal.Especie" class="form-control" />
+        <ValidationMessage For="() => animal.Especie" />
+    </div>
+    <div class="form-group">
+        <label for="Alimentacion">Alimentación del animal</label>
+        <InputText id="Alimentacion" @bind-Value="animal.Alimentacion" class="form-control" />
+        <ValidationMessage For="() => animal.Alimentacion" />
+    </div>
+    <div class="form-group">
+        <label for="Vida">Tiempo máximo de vida</label>
+        <InputNumber id="Vida" @bind-Value="animal.Vida" class="form-control" />
+        <ValidationMessage For="() => animal.Vida" />
+    </div>
+
+    <!-- Aquí podrías agregar campos adicionales para propiedades específicas de cada subclase -->
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
+</EditForm>
+
+@code {
+    private Animal animal = new Animal();
+    private List<Animal> animales = new List<Animal>();
+
+    protected async Task Guardar()
+    {
+        animales.Add(animal);
+        animal = new Animal();
+        await localStorage.SetItemAsync("animales", animales);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        animales = await localStorage.GetItemAsync<List<Animal>>("animales") ?? new List<Animal>();
+    }
+}
